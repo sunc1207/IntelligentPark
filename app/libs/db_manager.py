@@ -93,9 +93,10 @@ def get_company_info(db):
         co_num = item['co_num']
         company = item['company']
         entry_date = item['entry_date']
+        ed = datetime.strptime(entry_date, "%Y.%m.%d").strftime('%Y-%m-%d')
         co_info = {}
         co_info['name'] = company
-        co_info['entry_date'] = entry_date
+        co_info['entry_date'] = ed
         co_info['summary'] = 'None'
         company_info[co_num] = co_info
 
@@ -205,7 +206,7 @@ def get_company():
     db.close()
     return company_info
 
-def get_floor_info():
+def get_floor():
     db = Database("zyyjy", "huaxin_energy")
     floor_info = {'code': 200, 'time': get_last_time(db), 'data': get_floor_company(db)}
     db.close()
@@ -238,5 +239,5 @@ def get_co_num(co_num='180_11'):
 if __name__ == '__main__':
     print(get_all())
     print(get_company())
-    print(get_floor_info())
+    print(get_floor())
     print(get_co_num())

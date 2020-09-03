@@ -19,16 +19,16 @@ def get_all_data():
     return jsonify(get_all())
 
 @yp_data.route('/company_info', methods=['GET'])
-def company_info():
+def get_company_info():
     return jsonify(get_company())
 
 @yp_data.route('/floor_company', methods=['GET'])
 def get_floor_info():
-    return jsonify(get_floor_info())
+    return jsonify(get_floor())
 
 @yp_data.route('/co_num_info', methods=['POST'])
 def get_company_data():
-    co_num = request.get_json()['co_num']
+    co_num = request.json['co_num']
     return jsonify(get_co_num(co_num))
 
 @yp_data.route('/temperature', methods=['GET'])
