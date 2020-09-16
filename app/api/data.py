@@ -26,9 +26,9 @@ def get_company_info():
 def get_floor_info():
     return jsonify(get_floor())
 
-@yp_data.route('/co_num_info', methods=['POST'])
+@yp_data.route('/co_num_info', methods=['GET'])
 def get_company_data():
-    co_num = request.json['co_num']
+    co_num = request.args['co_num']
     return jsonify(get_co_num(co_num))
 
 @yp_data.route('/temperature', methods=['GET'])

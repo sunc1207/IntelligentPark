@@ -33,6 +33,10 @@ def get_energy_list(db, col, energy):
     col_pre = col + "_4h_pre"
 
     lastone = db.find_lastone(col_his)
+    if lastone ==  None:
+        col_his = '180_11_' + energy + "_4h_anomaly"
+        col_pre = '180_11_' + energy + "_4h_pre"
+        lastone = db.find_lastone(col_his)
     # print(lastone)
     time_end = lastone['Datetime']
     week = datetime.strptime(time_end, "%Y-%m-%d %H:%M:%S").weekday() + 1
@@ -87,17 +91,20 @@ def get_huaxin_info(db):
 
 def get_company_info(db):
     company_info = {}
-    col = "huaxin_co"
+    col = "huaxin_company"
     res = db.find(col)
     for item in res:
         co_num = item['co_num']
         company = item['company']
+        introduction = item['introduction']
+        business_scope = item['business_scope']
         entry_date = item['entry_date']
         ed = datetime.strptime(entry_date, "%Y.%m.%d").strftime('%Y-%m-%d')
         co_info = {}
         co_info['name'] = company
         co_info['entry_date'] = ed
-        co_info['summary'] = 'None'
+        co_info['introduction'] = introduction
+        co_info['business_scope'] = business_scope
         company_info[co_num] = co_info
 
     return company_info
@@ -202,7 +209,7 @@ def get_all():
 
 def get_company():
     db = Database("zyyjy", "huaxin_energy")
-    company_info = {'code': 200, 'data': get_company_info(db)}
+    company_info = {'code': 200, 'time': get_last_time(db), 'data': get_company_info(db)}
     db.close()
     return company_info
 
@@ -217,14 +224,17 @@ def get_co_num(co_num='180_11'):
     company_info = get_company_info(db)
     # print(company_info[co_num])
 
-    name = company_info[co_num]['name']
+    try:
+        name = company_info[co_num]['name']
+    except:
+        co_num = '180_11'
+        name = company_info[co_num]['name']
+
     col_energy = co_num + '_energy'
     col_MD = co_num + '_MD'
+
     list_usage_his, list_usage_pre, list_usage_ano, week_usage, time_usage = get_energy_list(db, col_energy, 'energy')
-
     list_MD_his, list_MD_pre, list_MD_ano, list_time, week_MD, time_MD = get_energy_list(db, col_MD, 'MD')
-
-
 
     usage = {'week': list_usage_his, 'week_forcast': list_usage_pre, 'anomaly': list_usage_ano, 'month': get_co_energy_month(db, time_usage, co_num, 6)}
     power = {'week': list_MD_his, 'week_forcast': list_MD_pre, 'anomaly': list_MD_ano}
